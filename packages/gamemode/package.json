@@ -1,0 +1,8 @@
+{
+  "name": "gamemode",
+  "version": "1.0.0",
+  "description": "RAGE MP TypeScript Gamemode",
+  "main": "index.js",
+  "author": "20XMAS24",
+  "license": "MIT"
+}

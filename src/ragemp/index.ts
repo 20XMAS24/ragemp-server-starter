@@ -3,7 +3,6 @@
  * This file integrates the API with RAGE MP server
  */
 
-import '../types/ragemp';
 import { db } from '../database/database';
 import { AuthService } from '../services/authService';
 import { JobService } from '../services/jobService';

@@ -50,7 +50,7 @@ function ensureDatabase() {
 }
 
 export class Database {
-  private data: DatabaseData;
+  private data: DatabaseData = { players: {}, jobs: {} };
 
   constructor() {
     ensureDatabase();

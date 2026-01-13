@@ -3,6 +3,7 @@
  * This file integrates the API with RAGE MP server
  */
 
+import '../types/ragemp';
 import { db } from '../database/database';
 import { AuthService } from '../services/authService';
 import { JobService } from '../services/jobService';
@@ -91,7 +92,7 @@ mp.events.addCommand('hire', (player: any, jobId: string) => {
     player.outputChatBox(`!{green}You are now hired as ${jobId}!`);
     player.setVariable('job', jobId);
   } else {
-    player.outputChatBox(`!{red}${result.error}`);
+    player.outputChatBox(`!{red}${result.error || 'Failed to hire'}`);
   }
 });
 
@@ -107,7 +108,7 @@ mp.events.addCommand('fire', (player: any) => {
     player.outputChatBox('!{green}You quit your job!');
     player.setVariable('job', null);
   } else {
-    player.outputChatBox(`!{red}${result.error}`);
+    player.outputChatBox(`!{red}${result.error || 'Failed to fire'}`);
   }
 });
 
@@ -124,7 +125,7 @@ mp.events.addCommand('duty', (player: any) => {
     player.outputChatBox(`!{green}You are now ${status}!`);
     player.setVariable('isOnDuty', result.data.isOnDuty);
   } else {
-    player.outputChatBox(`!{red}${result.error}`);
+    player.outputChatBox(`!{red}${result.error || 'Failed to toggle duty'}`);
   }
 });
 
@@ -178,7 +179,7 @@ mp.events.addCommand('makecop', (player: any, targetName?: string) => {
   if (result.success) {
     player.outputChatBox(`!{green}${username} is now a police officer!`);
   } else {
-    player.outputChatBox(`!{red}${result.error}`);
+    player.outputChatBox(`!{red}${result.error || 'Failed to recruit'}`);
   }
 });
 
@@ -191,12 +192,12 @@ mp.events.addCommand('salary', (player: any) => {
   
   const result = PoliceService.paySalary(username);
   if (result.success) {
-    player.outputChatBox(`!{green}${result.message}`);
+    player.outputChatBox(`!{green}${result.message || 'Salary paid'}`);
     if (result.data) {
       player.setVariable('money', result.data.money);
     }
   } else {
-    player.outputChatBox(`!{red}${result.error}`);
+    player.outputChatBox(`!{red}${result.error || 'Failed to pay salary'}`);
   }
 });
 

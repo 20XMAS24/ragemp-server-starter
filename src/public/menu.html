@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAGE MP - Menu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .menu-container {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(50, 50, 50, 0.95) 0%, rgba(30, 30, 30, 0.95) 100%);
+            border: 2px solid #667eea;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            animation: popIn 0.3s ease-out;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .menu-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 15px;
+        }
+
+        .menu-header h1 {
+            color: #667eea;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .player-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .info-item {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+        }
+
+        .info-label {
+            color: #999;
+            font-size: 11px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: #fff;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .menu-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 13px;
+            cursor: pointer;
+            padding: 8px 15px;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-btn:hover {
+            color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px 0;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .menu-item {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-item:hover {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .menu-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .item-label {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .item-value {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-btn:hover {
+            color: #fff;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-container">
+        <button class="close-btn" onclick="closeMenu()">✕</button>
+
+        <div class="menu-header">
+            <h1>MAIN MENU</h1>
+            <p id="playerName">Player</p>
+        </div>
+
+        <div class="player-info">
+            <div class="info-item">
+                <div class="info-label">Cash</div>
+                <div class="info-value">$<span id="cash">0</span></div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Bank</div>
+                <div class="info-value">$<span id="bank">0</span></div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Job</div>
+                <div class="info-value" id="jobDisplay">None</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Status</div>
+                <div class="info-value" id="statusDisplay">Off Duty</div>
+            </div>
+        </div>
+
+        <div class="menu-tabs">
+            <button class="tab-btn active" onclick="switchTab('jobs')">Jobs</button>
+            <button class="tab-btn" onclick="switchTab('police')">Police</button>
+            <button class="tab-btn" onclick="switchTab('bank')">Bank</button>
+            <button class="tab-btn" onclick="switchTab('other')">Other</button>
+        </div>
+
+        <div id="jobs" class="tab-content active">
+            <div class="menu-item" onclick="hireJob('taxi')">
+                <span class="item-label">Taxi Driver</span>
+                <span class="item-value">$1000/hour</span>
+            </div>
+            <div class="menu-item" onclick="hireJob('miner')">
+                <span class="item-label">Miner</span>
+                <span class="item-value">$1200/hour</span>
+            </div>
+            <div class="menu-item" onclick="fireJob()">
+                <span class="item-label">Fire Job</span>
+                <span class="item-value">Resign</span>
+            </div>
+            <div class="menu-item" onclick="toggleDuty()">
+                <span class="item-label">Toggle Duty</span>
+                <span class="item-value">Start/Stop Work</span>
+            </div>
+        </div>
+
+        <div id="police" class="tab-content">
+            <div class="menu-item" onclick="joinPolice()">
+                <span class="item-label">Join Police</span>
+                <span class="item-value">Law Enforcement</span>
+            </div>
+            <div class="menu-item" onclick="policeClockIn()">
+                <span class="item-label">Clock In</span>
+                <span class="item-value">Start Shift</span>
+            </div>
+            <div class="menu-item" onclick="policeClockOut()">
+                <span class="item-label">Clock Out</span>
+                <span class="item-value">End Shift</span>
+            </div>
+            <div class="menu-item" onclick="policeSalary()">
+                <span class="item-label">Receive Salary</span>
+                <span class="item-value">$1500</span>
+            </div>
+            <div class="menu-item" onclick="leavePolice()">
+                <span class="item-label">Leave Police</span>
+                <span class="item-value">Resign</span>
+            </div>
+        </div>
+
+        <div id="bank" class="tab-content">
+            <div class="menu-item" onclick="depositMoney()">
+                <span class="item-label">Deposit</span>
+                <span class="item-value">Cash → Bank</span>
+            </div>
+            <div class="menu-item" onclick="withdrawMoney()">
+                <span class="item-label">Withdraw</span>
+                <span class="item-value">Bank → Cash</span>
+            </div>
+            <div class="menu-item" onclick="transferMoney()">
+                <span class="item-label">Transfer</span>
+                <span class="item-value">To Player</span>
+            </div>
+        </div>
+
+        <div id="other" class="tab-content">
+            <div class="menu-item" onclick="logout()">
+                <span class="item-label">Logout</span>
+                <span class="item-value">Exit Game</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let playerData = {};
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function updatePlayerInfo() {
+            document.getElementById('playerName').textContent = playerData.username || 'Player';
+            document.getElementById('cash').textContent = playerData.money || 0;
+            document.getElementById('bank').textContent = playerData.bank || 0;
+            document.getElementById('jobDisplay').textContent = playerData.job || 'None';
+            document.getElementById('statusDisplay').textContent = playerData.isOnDuty ? 'On Duty' : 'Off Duty';
+        }
+
+        // Job functions
+        async function hireJob(jobId) {
+            try {
+                const response = await fetch('/api/job/hire', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: playerData.username, jobId })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    playerData = data.data;
+                    updatePlayerInfo();
+                    alert(`Hired as ${jobId}!`);
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                alert('Connection error');
+            }
+        }
+
+        async function fireJob() {
+            try {
+                const response = await fetch('/api/job/fire', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: playerData.username })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    playerData = data.data;
+                    updatePlayerInfo();
+                    alert('Job fired!');
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                alert('Connection error');
+            }
+        }
+
+        async function toggleDuty() {
+            try {
+                const response = await fetch('/api/job/duty/toggle', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: playerData.username })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    playerData = data.data;
+                    updatePlayerInfo();
+                    alert(playerData.isOnDuty ? 'You are on duty!' : 'You are off duty!');
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                alert('Connection error');
+            }
+        }
+
+        // Police functions
+        async function joinPolice() {
+            try {
+                const response = await fetch('/api/police/recruit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: playerData.username })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    playerData = data.data;
+                    updatePlayerInfo();
+                    alert('Joined Police Department!');
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                alert('Connection error');
+            }
+        }
+
+        async function policeClockIn() {
+            try {
+                const response = await fetch('/api/police/duty/in', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: playerData.username })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    playerData = data.data;
+                    updatePlayerInfo();
+                    alert('Clocked in!');
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                alert('Connection error');
+            }
+        }
+
+        async function policeClockOut() {
+            try {
+                const response = await fetch('/api/police/duty/out', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: playerData.username })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    playerData = data.data;
+                    updatePlayerInfo();
+                    alert('Clocked out!');
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                alert('Connection error');
+            }
+        }
+
+        async function policeSalary() {
+            try {
+                const response = await fetch('/api/police/salary', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: playerData.username })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    playerData = data.data;
+                    updatePlayerInfo();
+                    alert('Salary paid!');
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                alert('Connection error');
+            }
+        }
+
+        async function leavePolice() {
+            try {
+                const response = await fetch('/api/police/fire', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: playerData.username })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    playerData = data.data;
+                    updatePlayerInfo();
+                    alert('Left Police Department!');
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                alert('Connection error');
+            }
+        }
+
+        // Bank functions
+        function depositMoney() {
+            const amount = prompt('How much cash to deposit?');
+            if (amount) {
+                fetch('/api/player/bank/deposit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: playerData.username, amount: parseInt(amount) })
+                }).then(r => r.json()).then(data => {
+                    if (data.success) {
+                        playerData = data.data;
+                        updatePlayerInfo();
+                        alert('Deposited successfully!');
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                });
+            }
+        }
+
+        function withdrawMoney() {
+            const amount = prompt('How much to withdraw?');
+            if (amount) {
+                fetch('/api/player/bank/withdraw', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: playerData.username, amount: parseInt(amount) })
+                }).then(r => r.json()).then(data => {
+                    if (data.success) {
+                        playerData = data.data;
+                        updatePlayerInfo();
+                        alert('Withdrawn successfully!');
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                });
+            }
+        }
+
+        function transferMoney() {
+            const toUsername = prompt('Transfer to:');
+            const amount = prompt('Amount:');
+            if (toUsername && amount) {
+                fetch('/api/player/transfer', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fromUsername: playerData.username, toUsername, amount: parseInt(amount) })
+                }).then(r => r.json()).then(data => {
+                    if (data.success) {
+                        playerData = data.data;
+                        updatePlayerInfo();
+                        alert('Transfer successful!');
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                });
+            }
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                if (window.mp) {
+                    mp.trigger('logout');
+                }
+                alert('Logged out!');
+            }
+        }
+
+        function closeMenu() {
+            if (window.mp) {
+                mp.trigger('menu:close');
+            } else {
+                console.log('Menu closed');
+            }
+        }
+
+        // Initialize with mock data if not in CEF
+        if (!window.mp) {
+            playerData = {
+                username: 'TestPlayer',
+                money: 5000,
+                bank: 10000,
+                job: null,
+                isOnDuty: false
+            };
+            updatePlayerInfo();
+        }
+    </script>
+</body>
+</html>

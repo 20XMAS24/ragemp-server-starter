@@ -1,0 +1,11 @@
+{
+    "maxplayers":  500,
+    "name":  "[BONUS] Alpha Project Testek",
+    "gamemode":  "roleplay",
+    "stream-distance":  500.0,
+    "announce":  true,
+    "language":  "ru",
+    "csharp":  "enabled",
+    "voice-chat":  true,
+    "port":  22005
+}

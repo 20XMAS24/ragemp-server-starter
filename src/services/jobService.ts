@@ -28,8 +28,9 @@ export class JobService {
     });
     if (player) {
       PlayerManager.updateSession(player.id, player);
+      return { success: true, data: player };
     }
-    return { success: true, data: player };
+    return { success: false, error: 'Player not found' };
   }
 
   static promotePlayer(username: string, newRank: number) {
